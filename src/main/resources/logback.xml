@@ -1,56 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<configuration>
 
-<configuration scan="true">
-    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
-    <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter" />
-    <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter" />
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <!-- encoders are assigned the type
+         ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
 
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <charset>utf-8</charset>
-            <pattern>%clr(%d{HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%10.10t]){faint} %clr(%-40.40logger{36}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}</pattern>
-        </encoder>
-    </appender>
-
-    <logger name="io.github.microcks" level="DEBUG"/>
-    <!-- Change com.mongodb to org.mongodb so that com.mongodb.FongoDBCollection is ignored, set to debug and tests do not fail... -->
-    <logger name="org.mongodb" level="INFO"/>
-    <logger name="org.springframework.data.mongodb" level="INFO"/>
-    <logger name="org.keycloak" level="INFO"/>
-
-    <logger name="javax.activation" level="WARN"/>
-    <logger name="javax.mail" level="WARN"/>
-    <logger name="javax.xml.bind" level="WARN"/>
-    <logger name="ch.qos.logback" level="WARN"/>
-    <logger name="com.codahale.metrics" level="WARN"/>
-    <logger name="com.ryantenney" level="WARN"/>
-    <logger name="com.sun.xml.internal.bind" level="WARN"/>
-    <logger name="com.zaxxer" level="WARN"/>
-    <logger name="io.undertow" level="WARN"/>
-    <logger name="org.apache" level="WARN"/>
-    <logger name="org.apache.catalina.startup.DigesterFactory" level="OFF"/>
-    <logger name="org.bson" level="WARN"/>
-    <logger name="org.hibernate.validator" level="WARN"/>
-    <logger name="org.hibernate" level="WARN"/>
-    <logger name="org.hibernate.ejb.HibernatePersistence" level="OFF"/>
-    <logger name="org.springframework" level="WARN"/>
-    <logger name="org.springframework.aop" level="WARN"/>
-    <logger name="org.springframework.web" level="WARN"/>
-    <logger name="org.springframework.security" level="WARN"/>
-    <logger name="org.springframework.cache" level="WARN"/>
-    <logger name="org.springframework.scheduling" level="WARN"/>
-    <logger name="org.thymeleaf" level="WARN"/>
-    <logger name="org.xnio" level="WARN"/>
-    <logger name="com.mangofactory.swagger" level="WARN"/>
-    <logger name="com.wordnik.swagger" level="warn"/>
-    <logger name="sun.rmi.transport" level="warn"/>
-
-    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
-        <resetJUL>true</resetJUL>
-    </contextListener>
-
-    <root level="${logback.loglevel}">
-        <appender-ref ref="CONSOLE"/>
-    </root>
+  <root level="info">
+    <appender-ref ref="STDOUT" />
+  </root>
 
 </configuration>

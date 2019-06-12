@@ -1,74 +1,49 @@
-# microcks
+# Spring-Boot Camel QuickStart
 
-## Build Status
+This example demonstrates how you can use Apache Camel with Spring Boot.
 
-Current development version is `0.7.1-SNAPSHOT`. [![Build Status](https://travis-ci.org/microcks/microcks.png?branch=master)](https://travis-ci.org/microcks/microcks)
+The quickstart uses Spring Boot to configure a little application that includes a Camel route that triggers a message every 5th second, and routes the message to a log.
 
-## Developer Workspace
+### Building
 
-[![Contribute](https://che.openshift.io/factory/resources/factory-contribute.svg)](http://che-eclipse-che.apps.laurent.openhybridcloud.io/f?id=factoryfp1e8mfo0olbe90v)
+The example can be built with
 
-## Installation
+    mvn clean install
 
-## Development
+### Running the example in OpenShift
 
-For development purposes, frontend GUI and backend APIs have been separated and runs onto 2 different runtime servers.
-* Frontend is an Angular 6 application served by `ng serve` with livereload enabled,
-* Backend is a Spring Boot application served by Boot internal server
+It is assumed that:
+- OpenShift platform is already running, if not you can find details how to [Install OpenShift at your site](https://docs.openshift.com/container-platform/3.3/install_config/index.html).
+- Your system is configured for Fabric8 Maven Workflow, if not you can find a [Get Started Guide](https://access.redhat.com/documentation/en/red-hat-jboss-middleware-for-openshift/3/single/red-hat-jboss-fuse-integration-services-20-for-openshift/)
 
-We also need a Keycloak server running on port `8180`. 
+The example can be built and run on OpenShift using a single goal:
 
-### Pre-requisites
+    mvn fabric8:deploy
 
-* NodeJS (version >= 8.0) and associated tools : NPM and ng-cli (`npm install -g ng-cli`)
-* Java Development Kit (version >= 8) and Apache Maven (version >= 3.0)
-* Keycloak 3.4.0
-* MongoDB 3.2
+When the example runs in OpenShift, you can use the OpenShift client tool to inspect the status
 
-### Start servers
+To list all the running pods:
 
-Let's begin with starting the Keycloak server. Within the installation directory of Keycloak 3.4.0, just run this command:
+    oc get pods
 
-```
-$ cd bin
-$ ./standalone.sh -Djboss.socket.binding.port-offset=100
-```
+Then find the name of the pod that runs this quickstart, and output the logs from the running pods with:
 
-In a terminal, start frontend GUI server using NG :
+    oc logs <name of pod>
 
-```
-$ cd src/main/webapp
-$ grunt serve
-```
+You can also use the OpenShift [web console](https://docs.openshift.com/container-platform/3.3/getting_started/developers_console.html#developers-console-video) to manage the
+running pods, and view logs and much more.
 
-Server is started on port `4200`. Open a new browser tab pointing to `http://localhost:4200` where application is hosted.
+### Running via an S2I Application Template
 
-```
-$ mvn spring-boot:run
-```
+Application templates allow you deploy applications to OpenShift by filling out a form in the OpenShift console that allows you to adjust deployment parameters.  This template uses an S2I source build so that it handle building and deploying the application for you.
 
-Server is started on port `8080` and will be used as API endpoints root by frontend GUI (URLs starting by `http://localhost:9000/api` will be indeed proxied to port `8080`).
+First, import the Fuse image streams:
 
-## Build binaries
+    oc create -f https://raw.githubusercontent.com/jboss-fuse/application-templates/GA/fis-image-streams.json
 
-### Build and run Fat jar
+Then create the quickstart template:
 
-For now, there's still a problem with Frontend integration tests configuration so you should disable them using the following flag:
- 
-```
-$ mvn -Pprod package
-```
+    oc create -f https://raw.githubusercontent.com/jboss-fuse/application-templates/GA/quickstarts/spring-boot-camel-template.json
 
-```
-$ java -jar target/microcks-0.7.0-SNAPSHOT.jar
-```
+Now when you use "Add to Project" button in the OpenShift console, you should see a template for this quickstart. 
 
-### Build and run Docker image
-
-```
-$ mvn -Pprod clean package docker:build
-```
-
-```
-$ docker-compose -f microcks-mongodb.yml up -d
-```

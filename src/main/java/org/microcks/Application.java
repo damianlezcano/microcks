@@ -23,12 +23,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.annotation.PropertySource;
 
 /**
  * A spring-boot application that includes a Camel route builder to setup the
  * Camel routes
  */
 @SpringBootApplication
+@PropertySource("${ext.properties.file}")
 @ImportResource({ "classpath:spring/camel-context.xml" })
 public class Application {
 

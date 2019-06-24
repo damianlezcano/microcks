@@ -57,7 +57,9 @@ public class UploadArtifactController {
 	@ResponseBody
 	@RequestMapping(value = "keycloak/config", method = RequestMethod.GET, produces = "application/json")
 	public String getKeyclockConfig() {
-	    return "{\"realm\":\""+keycloakrealm+"\",\"resource\":\""+keycloakresource+"-js\",\"auth-server-url\":\""+keycloakauthserverurl+"\",\"ssl-required\":\"external\",\"public-client\":true}";
+		String config = "{\"realm\":\""+keycloakrealm+"\",\"resource\":\""+keycloakresource+"-js\",\"auth-server-url\":\""+keycloakauthserverurl+"\",\"ssl-required\":\"external\",\"public-client\":true}";
+		System.out.println("## config keyclock/config: " + config);
+	    return config;
 	}
 	//{"realm":"microcks","resource":"microcks-app-js","auth-server-url":"http://localhost:8180/auth","ssl-required":"external","public-client":true}
 }

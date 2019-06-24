@@ -29,7 +29,6 @@ public class ServletBean extends HttpServlet {
 		new BaseProcesor(root, request, response, "get") {
 			@Override
 			public void exec(NodeMethodOpenApiBean nodeMethod, Map<String,Object> pathParam, Map<String,Object> queryParam, RepositoryBean repository) throws Exception {
-				
 				NodeMap nType = nodeMethod.getNodeVersion().getSchema().get("type");
 				String type = nType.r() == null ? "string" : nType.str();
 				

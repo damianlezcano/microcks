@@ -46,4 +46,9 @@ public class TestRequestDTO {
    public Map<String, List<HeaderDTO>> getOperationsHeaders() {
       return operationsHeaders;
    }
+   
+   @Override
+	public String toString() {
+		return "serviceId: " + serviceId + " - testEndpoint: " + testEndpoint;
+	}
 }

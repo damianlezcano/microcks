@@ -41,7 +41,7 @@ public class UploadArtifactController {
 
 	@RequestMapping(value = "/artifact/upload", method = RequestMethod.POST)
 	public ResponseEntity<?> importArtifact(@RequestParam(value = "file") MultipartFile file) {
-		log.info("## Recibiendo archivo YAML");
+		log.info("## Recibiendo archivo con las definiciones");
 		try {
 			StringWriter writer = new StringWriter();
 			IOUtils.copy(file.getInputStream(), writer, StandardCharsets.UTF_8);

@@ -18,12 +18,6 @@
  */
 package org.microcks.web;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +29,7 @@ import org.microcks.model.node.Node;
 import org.microcks.model.node.openapi.NodeRootOpenApiBean;
 import org.microcks.model.node.openapi.NodeVersionOpenApiBean;
 import org.microcks.model.node.swagger.NodeRootSwaggerBean;
-import org.microcks.model.node.swagger.NodeVersionSwaggerBean;
+import org.microcks.utils.HttpClient;
 import org.microcks.web.dto.TestRequestDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,35 +55,44 @@ public class TestController {
 
 	@Autowired
 	private NodeRootOpenApiBean root;
+	
+	private HttpClient httpClient = new HttpClient();
 
 	private Map<String, Entry<Node,TestResult>> th = new HashMap<String, Entry<Node,TestResult>>();
 
 	@RequestMapping(value = "/tests", method = RequestMethod.POST)
 	public ResponseEntity<TestResult> createTest(@RequestBody TestRequestDTO test) throws Exception {
+		log.debug("# [createTest] Creating new test for TestRequestDTO: {}",test);
 		try {
-			log.debug("Creating new test for {} on endpoint {}", test.getServiceId(), test.getTestEndpoint());
 			// serviceId may have the form of <service_name>:<service_version>
-			String name = test.getServiceId().substring(0, test.getServiceId().indexOf(':'));
-			String version = test.getServiceId().substring(test.getServiceId().indexOf(':') + 1);
+			String[] key = test.getServiceId().split(":");
+			String name = key[0];
+			String version = key[1];
+			log.debug("# [createTest] Name: {} - Version: ",name,version);
 			NodeVersionOpenApiBean nodeVersion = (NodeVersionOpenApiBean) root.get(name).get(version);
 			TestResult testResult = createWorkerTests(nodeVersion, test.getTestEndpoint());
 			return new ResponseEntity<TestResult>(testResult, HttpStatus.CREATED);
 		} catch (Exception e) {
-			throw new Exception("Service (" + test.getServiceId() + ") not found in nodeROOT");
+			throw new Exception("Service (" + test + ") not found in nodeROOT");
 		}
 	}
 
 	@RequestMapping(value = "/tests/{id}", method = RequestMethod.GET)
 	public ResponseEntity<TestResult> getTestResult(@PathVariable("id") String testResultId) {
-		log.debug("Getting TestResult with id {}", testResultId);
+		log.debug("# [getTestResult] Getting TestResult with id {}", testResultId);
 		NodeVersionOpenApiBean nodeVersionOpenApi = null;
 		TestResult testResult = null;
 		try {
 			Entry<Node,TestResult> entry = th.get(testResultId);
 			nodeVersionOpenApi = (NodeVersionOpenApiBean) entry.getKey();
 			testResult = entry.getValue();
-			//------------------------------------------------------------
-			String json = httpGET(testResult.getTestedEndpoint());
+			
+			//----------------------------------------------------------------
+			String endpoint = testResult.getTestedEndpoint();
+			
+			log.info("# [getTestResult] Endpoint: {}", endpoint);
+			
+			String json = httpClient.httpGET(endpoint);
 			
 			Node nodeRootSwagger = new NodeRootSwaggerBean(json);
 			
@@ -135,39 +138,5 @@ public class TestController {
 		testResult.setSuccess(success);
 		return testResult;
 	}
-	
-	protected String httpGET(String path) throws Exception {
-		String response = "";
-		try {
-			URL url = new URL(path);
-			
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestMethod("GET");
-			conn.setRequestProperty("Content-Type", "application/json");
-			conn.setDoOutput(true);
-			
-			int statusCode = conn.getResponseCode();
-			if (statusCode >= 200 && statusCode < 400) {
-				response = extract(conn.getInputStream());
-			}else {
-				response = extract(conn.getErrorStream());
-			}
-			return response;
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.err.println("Error en la llamada GET");
-		}
-		return response;
-	}
-
-	private String extract(InputStream is) throws Exception {
-		Reader in = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-		StringBuilder data = new StringBuilder();
-		for (int c; (c = in.read()) >= 0;) {
-			data.append((char) c);
-		}
-		return data.toString();
-	}
-
 
 }

@@ -65,35 +65,36 @@ public class NodeMethodOpenApiBean extends Node {
 	}
 
 	private Object buildResponse(Map p) {
-		Map map = null;
-		
-		Map content = null;
-		try {
-			map = new HashMap();
-			content = (Map) p.get("content");
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-
-		Entry contentType = null;
-		try {
-			contentType = (Entry) content.entrySet().iterator().next();
-			map.put("ContentType", contentType.getKey());
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		
-		Map mapResultType = null;
-		try {
-			mapResultType = ((Map)((Map)contentType.getValue()).get("schema"));
-			String formatString = mapResultType.get("type").equals("array") ? "[%s]" : "%s";
-			String resultType = String.format(formatString, ((Map)mapResultType.get("items")).get("$ref"));
-			map.put("resultType",resultType);
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		
-		return map;
+		return p;
+//		Map map = null;
+//		
+//		Map content = null;
+//		try {
+//			map = new HashMap();
+//			content = (Map) p.get("content");
+//		} catch (Exception e) {
+//			// TODO: handle exception
+//		}
+//
+//		Entry contentType = null;
+//		try {
+//			contentType = (Entry) content.entrySet().iterator().next();
+//			map.put("ContentType", contentType.getKey());
+//		} catch (Exception e) {
+//			// TODO: handle exception
+//		}
+//		
+//		Map mapResultType = null;
+//		try {
+//			mapResultType = ((Map)((Map)contentType.getValue()).get("schema"));
+//			String formatString = mapResultType.get("type").equals("array") ? "[%s]" : "%s";
+//			String resultType = String.format(formatString, ((Map)mapResultType.get("items")).get("$ref"));
+//			map.put("resultType",resultType);
+//		} catch (Exception e) {
+//			// TODO: handle exception
+//		}
+//		
+//		return map;
 	}
 
 	public boolean havePathParam() {

@@ -2,6 +2,7 @@ package org.microcks.model;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class NodeMap {
 
@@ -19,6 +20,24 @@ public class NodeMap {
 		}else {
 			return new NodeMap(r);
 		}
+	}
+	
+	public NodeMap lookup(String key) {
+		NodeMap np = null;
+		if(r instanceof Map) {
+			for (Object item : ((Map) r).entrySet()) {
+				Entry entry = (Entry)item;
+				if(entry.getKey().equals(key)) {
+					return new NodeMap(entry.getValue());
+				}else{
+					np = new NodeMap(entry.getValue()).lookup(key);
+					if(np != null) {
+						return np;
+					}
+				}
+			}
+		}
+		return np;
 	}
 	
 	public List list() {

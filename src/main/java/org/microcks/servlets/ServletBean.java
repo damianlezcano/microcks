@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -33,19 +34,32 @@ public class ServletBean extends HttpServlet {
 				String type = nType.r() == null ? "string" : nType.str();
 				
 				List<Map> map = repository.get(pathParam,queryParam);
-
+				
+				//status code
+				Entry entryCode = (Entry) nodeMethod.getResponses().entrySet().iterator().next();
+				response.setStatus(Integer.valueOf(entryCode.getKey().toString()));
+				Map example = new NodeMap(entryCode.getValue()).lookup("examples").map();
+				//contentType
+				Entry entryExample = (Entry) example.entrySet().iterator().next();
+				response.setContentType("application/json");
+				//response
 				String json = "";
 				if(pathParam.isEmpty()) {
-					json = mapToJson(map);					
-				}else {
-					json = objectToJson(map.get(0));
+					if(map.isEmpty()) {
+						json = objectToJson(entryExample.getValue());
+					}else{
+						json = mapToJson(map);					
+					}
+				}else{
+					if(map.isEmpty()) {
+						json = objectToJson(entryExample.getValue());
+					}else{
+						json = objectToJson(map.get(0));						
+					}
 				}
-				
-				NodeMap nodeMap = new NodeMap(nodeMethod.getResponses());
-				//response.setContentType(nodeMap.get("200").get("ContentType").str());
-				response.setContentType("application/json");
 				PrintWriter out = response.getWriter();
 				out.println(json);
+			
 			}
 		}.run();
 	}
@@ -59,11 +73,16 @@ public class ServletBean extends HttpServlet {
 		        
 			    Map<String, String> map = jsonToMap(json);
 				repository.post(map,pathParam,queryParam);
-				
-				NodeMap nodeMap = new NodeMap(nodeMethod.getResponses());
-				//response.setContentType(nodeMap.get("200").get("ContentType").str());
+				//status code
+				Entry entryCode = (Entry) nodeMethod.getResponses().entrySet().iterator().next();
+				response.setStatus(Integer.valueOf(entryCode.getKey().toString()));
+				Map example = new NodeMap(entryCode.getValue()).lookup("examples").map();
+				//contentType
+				Entry entryExample = (Entry) example.entrySet().iterator().next();
 				response.setContentType("application/json");
+				//response
 				PrintWriter out = response.getWriter();
+				out.println(objectToJson(entryExample.getValue()));
 			}
 		}.run();
 	}
